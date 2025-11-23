@@ -115,8 +115,8 @@ MyApi/
 
 1. Clonar el repositorio  
    ```bash
-   git clone https://github.com/gilnergarciaambulay/api-rest-net8-clear-aquitectura.git
-   cd api-rest-net8-clear-aquitectura
+   git clone https://github.com/gilnergarciaambulay/api-rest-net8-clear-aquitectura-avanzado.git
+   cd api-rest-net8-clear-aquitectura-avanzado
    ```
 2. Restaurar dependencias  
    ```bash
@@ -130,7 +130,7 @@ MyApi/
 
 4. Ejecutar la API  
    ```bash
-   dotnet run --project api-rest-net8-clear-aquitectura
+   dotnet run --project api-rest-net8-clear-aquitectura-avanzado
    ```
 
 5. Acceder a la documentación Swagger:  
