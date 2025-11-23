@@ -79,7 +79,7 @@ MyApi/
 │   ├── ErrorUtilities.cs                ← Funciones auxiliares para manejo de errores
 │   └── Utilities.csproj                 ← Proyecto utilitario
 │
-└── MyApi.sln                            ← 💼 Solución principal
+└── MyApi.sln                            ← 💼 Solución principal 
 
 ```
 
