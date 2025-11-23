@@ -22,64 +22,72 @@ MyApi/
 ├── Core/              → 🧠 Dominio: entidades e interfaces base del negocio
 ├── Application/       → ⚙️ Aplicación: lógica de negocio y casos de uso
 ├── Infrastructure/    → 🧩 Infraestructura: persistencia y servicios externos
-├── WebApi/            → 🌐 Presentación: controladores y endpoints HTTP
-└── Utilities/         → 🧰 Utilidades y funciones auxiliares
+└── Presentation/      → 🌐 Presentación: controladores y endpoints HTTP
 ```
 
 ## 🏗️ Estructura del Proyecto: Detalle por cada capa
 ```bash
 MyApi/
 ├── Core/                                ← 🧠 Capa de Dominio
-│   ├── Entities/                        ← Entidades del dominio (modelos base del negocio)
-│   │   └── UnidadMedida.cs              ← Representa una entidad del dominio (por ejemplo, unidad de medida de un producto)
-│   ├── Interfaces/                      ← Contratos (abstracciones) del dominio
-│   │   └── IPedidosRepository.cs        ← Define qué operaciones deben ofrecer los repositorios, sin implementar nada
-│   └── Core.csproj                      ← Proyecto del dominio (sin dependencias a otras capas)
+│   ├── Entities/                        ← Entidades del dominio (modelos del negocio)
+│   │   ├── User.cs                      ← Entidad del dominio
+│   │   └── Contact.cs                   ← Entidad del dominio
+│   └── Core.csproj                      ← Proyecto del dominio (sin dependencias)
 │
 ├── Application/                         ← ⚙️ Capa de Aplicación
-│   ├── DTOs/                            ← Objetos de transferencia de datos (para comunicar entre capas)
-│   │   └── UnidadMedidaDto.cs           ← Versión simplificada de la entidad, usada en servicios o controladores
-│   ├── Interfaces/                      ← Contratos para los servicios de aplicación
-│   │   └── IUnidadMedidaService.cs      ← Define las operaciones de negocio disponibles (por ejemplo, CRUD de unidades)
-│   ├── Services/                        ← Implementaciones de los servicios de aplicación
-│   │   └── UnidadMedidaService.cs       ← Implementa la lógica de negocio usando los repositorios del dominio
-│   ├── DependencyInjection.cs           ← Configuración de inyección de dependencias para registrar servicios en el contenedor
-│   └── Application.csproj               ← Proyecto que depende solo del Core (Dominio)
+│   ├── DTOs/                            ← Objetos de transferencia (para entrada/salida)
+│   │   ├── AuthResponseDTO.cs           ← DTO para respuestas de autenticación
+│   │   ├── LoginRequestDTO.cs           ← DTO para solicitudes de login
+│   │   └── ContactDTO.cs                ← DTO de Contact, usado por servicios/controladores
+│   ├── Interfaces/                      ← Contratos de la capa de aplicación
+│   │   ├── IRepository/                 ← Contratos de repositorios (NO implementaciones)
+│   │   │   ├── IContactRepository.cs    ← Contrato de repositorio para Contact
+│   │   │   └── IUserRepository.cs       ← Contrato de repositorio para User
+│   │   ├── IService/                    ← Contratos de servicios de aplicación
+│   │   │   ├── IAuthService.cs          ← Servicio de autenticación
+│   │   │   └── IContactService.cs       ← Servicio para Contact
+│   ├── Services/                        ← Implementación de la lógica de aplicación
+│   │   ├── AuthService.cs               ← Implementación de IAuthService
+│   │   └── ContactService.cs            ← Implementación de IContactService
+│   ├── DependencyInjection.cs           ← Registro de servicios de la aplicación
+│   └── Application.csproj               ← Proyecto dependiente de Core
 │
 ├── Infrastructure/                      ← 🧩 Capa de Infraestructura
 │   ├── Persistence/                     ← Acceso a datos y persistencia
-│   │   ├── SqlServer/                   ← Implementaciones específicas para SQL Server
-│   │   │   ├── DatabaseSettings.cs      ← Configuración de conexión a la base de datos
-│   │   │   ├── SqlServerConnectionFactory.cs ← Crea conexiones SQL de manera centralizada
-│   │   │   └── Repositories/            ← Implementaciones concretas de repositorios
-│   │   │       └── PedidosRepository.cs ← Implementa IPedidosRepository, con consultas SQL reales
-│   ├── DependencyInjection.cs           ← Registra la infraestructura (repositorios, DbContext, etc.) en el contenedor DI
-│   └── Infrastructure.csproj            ← Proyecto que depende de Core y Application
+│   │   ├── SqlServer/                   ← Implementaciones para SQL Server
+│   │   │   ├── SqlServerConnectionFactory.cs ← Crea conexiones SQL
+│   │   │   └── Repositories/            ← Repositorios concretos
+│   │   │       └── PedidosRepository.cs ← Implementa IPedidosRepository
+│   │   ├── DatabaseSettings.cs          ← Configuración de conexión
+│   ├── DependencyInjection.cs           ← Registro de repositorios y persistencia
+│   └── Infrastructure.csproj            ← Proyecto dependiente de Core y Application
 │
-├── WebApi/                              ← 🌐 Capa de Presentación (API)
-│   ├── Controllers/                     ← Puntos de entrada HTTP (endpoints)
-│   │   └── PedidosController.cs         ← Expone las operaciones de pedidos mediante HTTP
-│   ├── DTOs/                            ← Modelos específicos para respuestas o peticiones API
-│   │   └── ApiResponse.cs               ← Modelo estándar de respuesta (status, mensaje, datos)
-│   ├── Middleware/                      ← Middleware personalizados de ASP.NET Core
-│   │   └── ExceptionHandlingMiddleware.cs ← Captura y maneja excepciones globalmente
-│   ├── appsettings.json                 ← Configuración general de la aplicación (conexiones, claves, etc.)
-│   ├── Program.cs                       ← Punto de entrada de la aplicación; configura servicios y middleware
-│   └── WebApi.csproj                    ← Proyecto ejecutable, depende de Application e Infrastructure
+├── WebApi/                              ← 🌐 Capa de Presentación
+│   ├── Controllers/                     ← Endpoints HTTP
+│   │   ├── ContactController.cs         ← Controlador para Contact
+│   │   └── UserController.cs            ← Controlador para User/Auth
+│   ├── Models/                          ← Modelos exclusivos de la API (si existen)
+│   │   └── ApiResponse.cs               ← Modelo estándar de respuesta
+│   ├── Middleware/                      ← Middlewares personalizados ASP.NET
+│   │   ├── RequestLoggingMiddleware.cs  ← Middleware para log de peticiones
+│   │   └── ErrorHandlingMiddleware.cs   ← Manejo global de errores
+│   ├── appsettings.json                 ← Configuración de la API
+│   ├── Program.cs                       ← Configuración principal y ejecución
+│   └── WebApi.csproj                    ← Proyecto ejecutable
 │
-├── Utilities/                           ← 🧰 Capa de utilidades o helpers
-│   ├── ErrorUtilities.cs                ← Funciones auxiliares para manejo o formato de errores
-│   └── Utilities.csproj                 ← Proyecto de utilidades reutilizable por otras capas
+├── Utilities/                           ← 🧰 Helpers y utilidades compartidas
+│   ├── ErrorUtilities.cs                ← Funciones auxiliares para manejo de errores
+│   └── Utilities.csproj                 ← Proyecto utilitario
 │
-└── MyApi.sln                            ← 💼 Solución principal que agrupa todos los proyectos
+└── MyApi.sln                            ← 💼 Solución principal
+
 ```
 
 ### 🔁 Dependencias entre capas
 
 - **WebApi** depende de **Application**
 - **Application** depende de **Core**
-- **Infrastructure** implementa interfaces de **Core** y es utilizada por **Application**
-- **Utilities** puede ser usada por todas las capas
+- **Infrastructure** implementa interfaces de **Core** 
 
 ---
 
